@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{'Catégorie'|trans}} "{{ category.shortname }}"{% endblock %}
+
+{% block body %}
+    <h1>{{'Catégorie'|trans}} "{{ category.shortname }}"</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>{{ 'Id'|trans }}</th>
+                <td>{{ category.id }}</td>
+            </tr>
+            <!--<tr>
+                <th>{{ 'Language'|trans }}</th>
+                <td>{{ category.language }}</td>
+            </tr>-->
+            <tr>
+                <th>{{ 'Nom abrégé'|trans }}</th>
+                <td>{{ category.shortname }}</td>
+            </tr>
+            <tr>
+                <th>{{ 'Nom'|trans }}</th>
+                <td>{{ category.longname }}</td>
+            </tr>
+            <tr>
+                <th>{{ 'Quizz(s)'|trans }}</th>
+                <td>
+                  {% for quiz in category.quizzes %}
+                     - {{ quiz.title }} <br>
+                  {% endfor %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a class="btn btn-primary mr-2" href="{{ path('category_index') }}"><i class="fas fa-arrow-circle-left"></i> {{'Retour à la liste'|trans}}</a>
+
+    {% if is_granted('ROLE_TEACHER') %}
+        <a class="btn btn-primary" href="{{ path('category_edit', {'id': category.id}) }}"><i class="fas fa-pencil-alt"></i> {{'Editer'|trans}}</a>
+    {% endif %}
+
+{% endblock %}

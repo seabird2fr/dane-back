@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+
+{% block title %}{{'Nouveau Quiz'}}{% endblock %}
+
+{% block body %}
+    <h1>Créer un nouveau Quiz</h1>
+
+    {{ include('quiz/_form.html.twig') }}
+
+{% endblock %}

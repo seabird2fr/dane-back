@@ -1,0 +1,12 @@
+{{ form_start(form) }}
+    {{ form_row(form.username,{'label':'Identifiant'}) }}
+    {{ form_row(form.email,{'label':'Email'}) }}
+    {{ form_row(form.isActive) }}
+    {{ form_row(form.roles) }}
+
+    <a class="btn btn-secondary" href="{{ path('user_index') }}"><i class="fas fa-arrow-circle-left"></i> {{'Retour à la liste'|trans}}</a>
+    {% if is_granted('ROLE_SUPER_ADMIN') %}
+        <button class="btn btn-primary"><i class="fas fa-check"></i> {{ button_label|default('Sauver'|trans) }}</button>
+    {% endif %}
+
+{{ form_end(form) }}

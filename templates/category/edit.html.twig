@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+
+{% block title %}Edition catégorie "{{ category.shortname }}"{% endblock %}
+
+{% block body %}
+    <h1>Edition catégorie "{{ category.shortname }}"</h1>
+
+    {% if is_granted('ROLE_TEACHER') %}
+        {{ include('category/_form.html.twig', {'button_label': 'Update'|trans}) }}
+    {% endif %}
+
+{% endblock %}

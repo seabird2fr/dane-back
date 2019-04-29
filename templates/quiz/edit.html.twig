@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+
+{% block title %}{{'Editer le Quiz'}} "{{ quiz.title }}"{% endblock %}
+
+{% block body %}
+    <h1>{{'Editer le Quiz'}} "{{ quiz.title }}"</h1>
+
+    {% if is_granted('ROLE_TEACHER') %}
+        {{ include('quiz/_form.html.twig', {'button_label': 'Mise à jour'}) }}
+    {% endif %}
+
+{% endblock %}

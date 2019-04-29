@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{'Editer la réponse'}}{% endblock %}
+
+{% block body %}
+    <h1>{{'Editez la réponse'}}</h1>
+
+    {% if is_granted('ROLE_TEACHER') %}
+        {{ include('answer/_form.html.twig', {'button_label': 'Mise à jour'}) }}
+    {% endif %}
+
+{% endblock %}

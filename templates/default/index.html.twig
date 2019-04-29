@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{'Welcome!'|trans}}{% endblock %}
+
+{% block body %}
+    <div class="example-wrapper">
+
+        <img src="/images/2017_Logo_acad.jpg" style="height:200px" alt="Logo Acad">
+
+        <div class="jumbotron">
+            <h3>Titre Quiz</h3>
+            <p></p>
+            <h6>Présentation ..........</h6>
+            <hr class="my-4">
+            <h3>Caractéristiques</h3>
+            <ul>
+                <li>Liste </li>
+                <li>Liste </li>
+                <li>Liste </li>
+   
+            </ul>
+          
+
+            <a class="btn btn-primary float-md-right" href="{{ path('login') }}" role="button">Commencer<i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+
+    </div>
+
+
+
+{% endblock %}

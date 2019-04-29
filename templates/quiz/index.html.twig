@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{'Quiz index'|trans}}{% endblock %}
+
+{% block body %}
+    <h1>{{'Quiz index'}}</h1>
+
+    {% if is_granted('ROLE_TEACHER') %}
+        <div class="mb-3">
+            <a class="btn btn-primary" href="{{ path('quiz_new') }}"><i class="fas fa-plus"></i> {{'Créer un nouveau Quiz'}}</a>
+        </div>
+    {% endif %}
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>{{ 'Titre' }}</th>
+                <th>{{ 'Questions' }}</th>
+                <th>{{ 'Categories' }}</th>
+                {% if is_granted('ROLE_TEACHER') %}
+                    <th>{{ 'Actif' }}</th>
+                    <th>{{ 'Anonyme' }}</th>
+                {% endif %}
+                {% if is_granted('ROLE_USER') %}
+                    <th>{{ 'Actions' }}</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+        {% for quiz in quizzes %}
+            <tr>
+                <td title="{{ quiz.summary }}">{{ quiz.title }}</td>
+                <td>{{ quiz.numberOfQuestions }}</td>
+                <td>
+                  {% for category in quiz.categories %}
+                     - {{ category.longname }} <br>
+                  {% endfor %}
+                </td>
+                {% if is_granted('ROLE_TEACHER') %}
+                    <td>{{ quiz.active ? 'Yes' : 'No' }}</td>
+                    <td>{{ quiz.allowAnonymousWorkout ? 'Yes' : 'No' }}</td>
+                    <td>
+                        <div class="form-check-inline">
+                            <a class="btn btn-primary btn-sm mr-2" href="{{ path('quiz_show', {'id': quiz.id}) }}" title="{{'Montrer'}}"><i class="fas fa-eye"></i></a>
+                            <a class="btn btn-primary btn-sm mr-2" href="{{ path('quiz_edit', {'id': quiz.id}) }}" title="{{'Editer'}}"><i class="fas fa-pencil-alt"></i></a>
+                            {{ include('quiz/_delete_form.html.twig') }}
+                            <a class="btn btn-primary btn-sm mr-2" href="{{ path('quiz_start', {'id': quiz.id}) }}">{{'Commencer'}} <i class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </td>
+                {% else %}
+                    {% if is_granted('ROLE_USER') %}
+                    <td>
+                        <a class="btn btn-primary btn-sm mr-2" href="{{ path('quiz_start', {'id': quiz.id}) }}">{{'Commencer'}} <i class="fas fa-arrow-circle-right"></i></a>
+                    </td>
+                    {% endif %}
+                {% endif %}
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">{{"pas d'enregistrement trouvé"}}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

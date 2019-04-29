@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+
+
+	
+{% block title %}Résultats du quiz{% endblock %}
+
+
+	{% block body %}
+
+
+		<h1>Résultats de {{ donnees_quiz.title }}</h1>
+
+
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+
+			{{ form_start(form) }}
+
+    		{{ form_widget(form) }}
+
+			{{ form_end(form) }}
+
+
+{% if results | length > 0 and pourcentage_reussite_question | length > 0 %}
+
+
+
+			{#
+			{{ dump(results) }}
+			#}
+
+			{#{{ dump(app) }}#}
+			<h2>Nbrs de Tentatives: {{ results | length }} </h2>
+			<h2>Pourcentage de réussite globale: {{ pourcentage_global }} %</h2>
+
+
+
+
+
+			{% for quiz in results %}
+
+				{#{{ dump(quiz.getAvgScore) }}#}
+
+
+				{# {{ dump(quiz.questionsHistory) }} #}
+				{#{{ dump(quiz) }}#}
+
+				{% if loop.first %}
+					{#<p><strong>Nbrs de questions par tentative : {{ quiz.questionsHistory | length }}</strong></p>#}
+					<h2>Nbrs de questions pour {{ donnees_quiz.title }}: {{ quiz.NumberOfQuestions }}</h2>
+				{% endif %}
+
+
+			{% endfor %}
+
+{% if (donnees_quiz.extraitend) %}			
+<div class="card card-body mt-3"> 
+	<h4>Extrait du texte</h4>
+	<p>{{ donnees_quiz.extraitend | striptags('<b><strong><br><p>') | raw | nl2br }}</p>
+</div>
+{% endif %}
+
+
+			{#{{ dump(pourcentage_reussite_question) }}#}
+
+			{% for question in pourcentage_reussite_question %}
+				<div class="card card-body mt-3"> 	
+					<h3>Question: {{ question.titre }}</h3>
+					<h3>Réponse juste: {{ question.reponse }}</h3>
+					<div class="progress" style="height: 20px;">
+						<div class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" style="width: {{ question.pourcentage_reussite_question }}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{ question.pourcentage_reussite_question }} % de bonnes réponses</div>
+					</div>
+					
+					<h4 class="mt-3">Réponses possibles:</h4>
+					{% for key, reponse in question.toutes_les_reponses %}
+					<ul>	
+					<li class="text-danger">{{key}} : {{reponse.0}} clics </li>
+					<div class="progress" style="height: 20px;">
+						<div class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" style="width: {{ reponse.1 }}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{ reponse.1 }} % de clics</div>
+					</div>
+					</ul>
+					{% endfor %}
+
+
+					{#{{ dump(question.reponse_donnee) }}#}
+					{#
+					<hr>
+					<h3 class="text-center">Quelques Réponses aléatoires</h3>
+					{% for reponse in question.reponse_donnee %}
+						<div class="col mt-2">
+							<div class="alert alert-warning">
+								<strong>Réponse de l'élève</strong>: {{ reponse.reponse_donnee }}<br>
+								<strong>Justification de l'élève:</strong> {{ reponse.commentaire }}
+							</div>
+						</div>
+						
+					{% endfor %}
+					#}
+
+				</div>
+
+				
+
+			{% endfor %}
+
+{% else %}
+
+<h2 class="alert alert-danger">PAS DE RESULTATS DISPONIBLES</h2>	
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+
+{% block title %}{{'Nouvel utilisateur'|trans}}{% endblock %}
+
+{% block body %}
+    <h1>Créer un nouvel utilisateur</h1>
+
+    {{ include('user/_form.html.twig') }}
+
+{% endblock %}

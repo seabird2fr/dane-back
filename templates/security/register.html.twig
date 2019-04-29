@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+
+{% block title %}{{'Inscription'|trans}}{% endblock %}
+
+{% block body %}
+
+<div class="example-wrapper">
+
+
+
+    <div class="jumbotron">
+        <h1><i class="fa fa-user"></i> {{'Inscription'|trans}}</h1>
+
+        {{ form_start(form) }}
+            {{ form_row(form.username,{'label':'Identifiant'}) }}
+            {{ form_row(form.email,{'label':'Email'}) }}
+            {{ form_row(form.plainPassword.first,{'label':'Mot de passe'}) }}
+            {{ form_row(form.plainPassword.second,{'label':'Confirmation mot de passe'}) }}
+            {{ form_row(form.termsAccepted,{'label':'J\'ai lu les termes et conditions'}) }}
+           <a href="terms_and_conditions.pdf" target="_blank">{{ 'Termes et conditions'|trans }}</a>
+            <button class="btn btn-primary float-md-right" type="submit"><i class="fas fa-user-plus"></i> {{'Inscription'|trans}}</button>
+        {{ form_end(form) }}
+
+    </div>
+
+</div>
+
+
+
+{% endblock %}
