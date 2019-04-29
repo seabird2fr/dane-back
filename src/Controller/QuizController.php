@@ -60,32 +60,51 @@ foreach ($categories as $value)
 
 
 // on récupère toutes les quizzes disponibles
-$quizzes= $quiz->findAll();
+    $quizzes= $quiz->findAll();
+
+    if (count($quizzes)>0){    
 // on met dans un tableau les quiz pour créer le formulaire de choix des résultats dans twig
-foreach ($quizzes as $value) 
-    {
+        foreach ($quizzes as $value) 
+        {
 
-$choix_quiz[$value->getTitle()]=$value->getId();
+            $choix_quiz[$value->getTitle()]=$value->getId();
 
-}
+        }
 //dump($choix_quiz);
 
 
 // création du formulaire 
-    $form = $this->createFormBuilder()
+        $form = $this->createFormBuilder()
         ->add('quiz', ChoiceType::class, [
             'label' => 'Choisissez le quiz ',
             'group_by' =>'null',
-                        'choices'  => [
-                            $choix_quiz
-                                ],
-             'attr' => array(
+            'choices'  => [
+                $choix_quiz
+            ],
+            'attr' => array(
                 'onchange' => 'submit()',
-        ),                   
+            ),                   
+        ])
+        ->getForm();
+
+    }
+    else{
+
+        $form = $this->createFormBuilder()
+        ->add('quiz', ChoiceType::class, [
+            'label' => 'Choisissez le quiz ',
+            'group_by' =>'null',
+            'choices'  => [
+                'Pas de quiz' => 'Pas de quiz'
+            ],
+            'attr' => array(
+                'onchange' => 'submit()',
+            ),                   
         ])
         ->getForm();
 
 
+    }
 
 
 
@@ -119,13 +138,13 @@ $choix_quiz[$value->getTitle()]=$value->getId();
 
 
 // recupération de la requête
-$form->handleRequest($request);
+        $form->handleRequest($request);
 //dump($request->request->get('form')['quiz']);
 
 
     // si le form est soumis
         if ($form->isSubmitted() && $form->isValid())
-                {
+        {
 
                     // recupération des id des questions de la catégorie choisie que l'on met dans un tableau
                     // 4 categorie francais 1  ; 5 categorie francais 2
@@ -135,25 +154,25 @@ $form->handleRequest($request);
 
 
                     // recupération des id des questions du quiz choisi que l'on met dans un tableau
-                    $tableauIdQuestion=$quiz->findIdQuestion($request->request->get('form')['quiz']);
+            $tableauIdQuestion=$quiz->findIdQuestion($request->request->get('form')['quiz']);
 
                 // données du quiz concerné
-                    $donnees_quiz=$quiz->find($request->request->get('form')['quiz']);
+            $donnees_quiz=$quiz->find($request->request->get('form')['quiz']);
                 //dump($tableauIdQuestion);
 
-                }
-                  else {
+        }
+        else {
 
                         //$tableauIdQuestion=$categorie->findIdQuestion(current($choix_quiz));
-                        
+
                         // recupération des id des questions du quiz choisi que l'on met dans un tableau
-                        $tableauIdQuestion=$quiz->findIdQuestion(current($choix_quiz));
-                       
+            $tableauIdQuestion=$quiz->findIdQuestion(current($choix_quiz));
+
                        // données du quiz concerné
-                       $donnees_quiz=$quiz->find(current($choix_quiz));
+            $donnees_quiz=$quiz->find(current($choix_quiz));
                         //dump($tableauIdQuestion);
 
-                        }
+        }
 
 
 
@@ -167,11 +186,11 @@ $form->handleRequest($request);
             $tabReponseAleatoires=[];
 
         //initialisation tableau de tous les réponses données a une question
-        $toutes_les_reponses=[];
+            $toutes_les_reponses=[];
 
             // recupération de la bonne réponse à la question donnée
             $reponse = $answer->findBy( array('question' => $id, 'correct' => 1));
-           
+
 
             //*********** début calcul réussite question d'id $id **********************
             $question = $historyQuestion->findBy( array('question_id' => $id));
@@ -200,7 +219,7 @@ $form->handleRequest($request);
 
             }
 
-           
+
 
             //********************** NBRS DE REPONSES ALEATOIRES**************************************
             // on prend deux cles du tableau repose élève aléatoirement
@@ -223,14 +242,14 @@ $form->handleRequest($request);
                     //dump($tabReponseDonnee);
                     //dump(count($tabReponseDonnee[$cle]));
                     // si plusieurs réponses fausses par exemple et que l'on veut toutes les réponses fausses, il faut boucler sur le deuxième indice
-                    
+
                     if (count($tabReponseDonnee[$cle])>0)
                         $tabReponseAleatoires[]=['reponse_donnee'=>$tabReponseDonnee[$cle][0]->getAnswerText(),'commentaire'=>$tabReponseDonnee[$cle][0]->getJustifyReponse()];
                 }
             }
             elseif (count($tabReponseDonnee[0])!=0)
              $tabReponseAleatoires[]=['reponse_donnee'=>$tabReponseDonnee[0][0]->getAnswerText(),'commentaire'=>$tabReponseDonnee[0][0]->getJustifyReponse()];
-            
+
 
             //************************ fin recup quelques réponses données par les élèves***********************
 //dump($tabReponseDonnee);
@@ -248,19 +267,19 @@ $form->handleRequest($request);
 
 
                 //********************* debut recup toutes les réponses données par les élèves à la question *********************
-                        foreach ($tableauIdReponse as  $value) {
-                            
-                            if (array_key_exists($id,$value)) 
-                            {
+            foreach ($tableauIdReponse as  $value) {
+
+                if (array_key_exists($id,$value)) 
+                {
                           //      dump($value[$id]);
                            // nbre de chaque reponses à la question     
-                        $toutes_les_reponses[$value[$id]][0]=count($historyAnswer->findBy( array('answer_text' => $value[$id],'correct_given'=> 1)));
+                    $toutes_les_reponses[$value[$id]][0]=count($historyAnswer->findBy( array('answer_text' => $value[$id],'correct_given'=> 1)));
 
                           //pourcentage sur le nombre de question 
-                            $toutes_les_reponses[$value[$id]][1]=round(count($historyAnswer->findBy( array('answer_text' => $value[$id],'correct_given'=> 1)))/$nbrsQuestion*100,2);
+                    $toutes_les_reponses[$value[$id]][1]=round(count($historyAnswer->findBy( array('answer_text' => $value[$id],'correct_given'=> 1)))/$nbrsQuestion*100,2);
 
-                            }
-                        }
+                }
+            }
 
                 //********************* fin recup toutes les réponses données par les élèves à la question********************* 
 
@@ -270,7 +289,7 @@ $form->handleRequest($request);
 
          // on fabrique un tableau des pourcentages de réussite des questions et leur réponse correcte et le nombre de chaque réponse pour transmttre à twig
             $tabResults[]=['titre'=>$question[0]->getQuestionText(),'pourcentage_reussite_question'=>$pourcentage_reussite,'reponse'=> $reponse[0]->getText(),'reponse_donnee'=>$tabReponseAleatoires,'toutes_les_reponses'=>$toutes_les_reponses];
-       
+
 
 
         }
@@ -278,13 +297,13 @@ $form->handleRequest($request);
 //dump($tabResults);
 
     // si on n'a pas répondu à un quiz 
-            if (empty($question)) $tabResults=null;
+        if (empty($question)) $tabResults=null;
 
         return $this->render('quiz/showResults.html.twig',[
             'results' => $results,
             'pourcentage_global' => $pourcentage_reussite_globale,
-           'pourcentage_reussite_question' => $tabResults,
-           'donnees_quiz' => $donnees_quiz,
+            'pourcentage_reussite_question' => $tabResults,
+            'donnees_quiz' => $donnees_quiz,
             'form' => $form->createView(),
         ]);
 
@@ -293,13 +312,13 @@ $form->handleRequest($request);
 else {
 
  return $this->render('quiz/showResults.html.twig',[
-            'results' => $results,
-            'form' => $form->createView(),
+    'results' => $results,
+    'form' =>  $form->createView(),
 
-        ]);
+]);
 
 
-        }
+}
 
 }
 

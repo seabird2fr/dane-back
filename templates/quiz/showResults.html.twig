@@ -1,26 +1,26 @@
 {% extends 'base.html.twig' %}
 
 
-	
+
 {% block title %}Résultats du quiz{% endblock %}
 
 
 	{% block body %}
 
-
+		{% if donnees_quiz is defined %}
 		<h1>Résultats de {{ donnees_quiz.title }}</h1>
+		{% endif %}
 
-
-{% form_theme form 'bootstrap_4_layout.html.twig' %}
+		{% form_theme form 'bootstrap_4_layout.html.twig' %}
 
 			{{ form_start(form) }}
 
-    		{{ form_widget(form) }}
+			{{ form_widget(form) }}
 
 			{{ form_end(form) }}
 
 
-{% if results | length > 0 and pourcentage_reussite_question | length > 0 %}
+	{% if results | length > 0 and pourcentage_reussite_question | length > 0 %}
 
 
 
@@ -52,12 +52,12 @@
 
 			{% endfor %}
 
-{% if (donnees_quiz.extraitend) %}			
-<div class="card card-body mt-3"> 
-	<h4>Extrait du texte</h4>
-	<p>{{ donnees_quiz.extraitend | striptags('<b><strong><br><p>') | raw | nl2br }}</p>
-</div>
-{% endif %}
+			{% if (donnees_quiz.extraitend) %}			
+				<div class="card card-body mt-3"> 
+					<h4>Extrait du texte</h4>
+					<p>{{ donnees_quiz.extraitend | striptags('<b><strong><br><p>') | raw | nl2br }}</p>
+				</div>
+			{% endif %}
 
 
 			{#{{ dump(pourcentage_reussite_question) }}#}
@@ -72,12 +72,12 @@
 					
 					<h4 class="mt-3">Réponses possibles:</h4>
 					{% for key, reponse in question.toutes_les_reponses %}
-					<ul>	
-					<li class="text-danger">{{key}} : {{reponse.0}} clics </li>
-					<div class="progress" style="height: 20px;">
-						<div class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" style="width: {{ reponse.1 }}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{ reponse.1 }} % de clics</div>
-					</div>
-					</ul>
+						<ul>	
+							<li class="text-danger">{{key}} : {{reponse.0}} clics </li>
+							<div class="progress" style="height: 20px;">
+								<div class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" style="width: {{ reponse.1 }}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{ reponse.1 }} % de clics</div>
+							</div>
+						</ul>
 					{% endfor %}
 
 
@@ -102,10 +102,10 @@
 
 			{% endfor %}
 
-{% else %}
+		{% else %}
 
-<h2 class="alert alert-danger">PAS DE RESULTATS DISPONIBLES</h2>	
+			<h2 class="alert alert-danger">PAS DE RESULTATS DISPONIBLES</h2>	
 
-{% endif %}
+		{% endif %}
 
-{% endblock %}
+	{% endblock %}
