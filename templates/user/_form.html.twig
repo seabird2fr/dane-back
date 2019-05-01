@@ -1,8 +1,18 @@
 {{ form_start(form) }}
     {{ form_row(form.username,{'label':'Identifiant'}) }}
     {{ form_row(form.email,{'label':'Email'}) }}
-    {{ form_row(form.isActive) }}
+    
+
+    {% if 'ROLE_SUPER_ADMIN' not in user.roles %}
     {{ form_row(form.roles) }}
+	{{ form_row(form.isActive) }}
+
+	{% else %}
+
+   {{ form_row(form.roles, {'label':false, 'attr': {'style': 'display:none'} }) }}
+	<div style="display:none">{{ form_row(form.isActive) }}</div>
+
+	{% endif %}
 
     <a class="btn btn-secondary" href="{{ path('user_index') }}"><i class="fas fa-arrow-circle-left"></i> {{'Retour à la liste'|trans}}</a>
     {% if is_granted('ROLE_SUPER_ADMIN') %}
