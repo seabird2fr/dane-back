@@ -103,7 +103,7 @@ class UserController extends Controller
 
                 $this->addFlash(
                                 'success',
-                                "Votre mot a bien été modifié"
+                                "Votre mot de passe a bien été modifié"
                     );
 
                return $this->redirectToRoute('index');
