@@ -73,6 +73,7 @@ class UserType extends AbstractType
                         'multiple' => true,
                         'expanded' => true, // render check-boxes
                         'choices' => array(
+                            'Teacher' => 'ROLE_TEACHER',
                             'Admin' => 'ROLE_ADMIN',
                             'Super admin' => 'ROLE_SUPER_ADMIN',
                         ),
@@ -91,6 +92,7 @@ class UserType extends AbstractType
                         'multiple' => true,
                         'expanded' => true, // render check-boxes
                         'choices' => array(
+                            'Teacher' => 'ROLE_TEACHER',
                             'Admin' => 'ROLE_ADMIN',
                             'Super admin' => 'ROLE_SUPER_ADMIN',
                         ),
