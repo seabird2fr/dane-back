@@ -11,6 +11,15 @@
         </div>
     {% endif %}
 
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+    
+        {{ form_start(form) }}
+
+            {{ form_widget(form) }}
+
+            {{ form_end(form) }}
+
+
     <table class="table">
         <thead>
             <tr>
@@ -57,10 +66,13 @@
         </tbody>
     </table>
 
+{% if questions.maxPerPage is defined %}
     {% if questions.haveToPaginate %}
         <div class="navigation text-center">
             {{ pagerfanta(questions, 'twitter_bootstrap4_translated', {routeName: 'question_index_paginated'}) }}
         </div>
     {% endif %}
+{% endif %}
+
 
 {% endblock %}

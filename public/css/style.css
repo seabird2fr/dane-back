@@ -71,3 +71,9 @@ input[type=checkbox] + label {
     border-color:  gray;
     color: black;
   }
+
+/* jumbotron passation question */
+.workoutquestion.jumbotron {
+    padding: unset;
+    padding: 20px;
+}

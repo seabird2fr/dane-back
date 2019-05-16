@@ -33,6 +33,172 @@ class QuizController extends Controller
 {
 
 
+    /**
+     * @Route("/results-eleve", name="quiz_result_eleve" )
+     *@IsGranted("ROLE_TEACHER") 
+     */
+    public function viewResultEleve(WorkoutRepository $results,QuizRepository $quiz,Request $request)
+    {
+
+// on récupère toutes les quizzes disponibles
+        $quizzes= $quiz->findAll();
+
+        if (count($quizzes)>0){    
+// on met dans un tableau les quiz pour créer le formulaire de choix des résultats dans twig
+            foreach ($quizzes as $value) 
+            {
+
+                $choix_quiz[$value->getTitle()]=$value->getId();
+
+            }
+//dump($choix_quiz);
+
+
+// création du formulaire 
+            $form = $this->createFormBuilder()
+            ->add('quiz', ChoiceType::class, [
+                'label' => 'Choisissez le quiz ',
+                'group_by' =>'null',
+                'choices'  => [
+                    $choix_quiz
+                ],
+                'attr' => array(
+                    'onchange' => 'submit()',
+                ),                   
+            ])
+            ->getForm();
+
+        }
+        else{
+
+            $form = $this->createFormBuilder()
+            ->add('quiz', ChoiceType::class, [
+                'label' => 'Choisissez le quiz ',
+                'group_by' =>'null',
+                'choices'  => [
+                    'Pas de quiz' => 'Pas de quiz'
+                ],
+                'attr' => array(
+                    'onchange' => 'submit()',
+                ),                   
+            ])
+            ->getForm();
+
+
+        }
+
+
+
+
+        $form->handleRequest($request);
+//dump($request->request->get('form')['quiz']);
+
+
+    // si le form est soumis
+        if ($form->isSubmitted() && $form->isValid())
+        {
+
+            //dump($request->request->get('form')['quiz']);
+            if ($results->findAll())
+                $results=$results->findBy(array('quiz' => $request->request->get('form')['quiz']),array('score' => 'desc'));
+            else $results=[];
+
+            if (count($results)>0){
+
+                foreach ($results as $result )
+                {
+
+//dump($result->getQuiz()->getTitle());
+//dump($result->getStudent()->getUsername());
+//dump($result->getScore());
+
+                    $tabResults[$result->getStudent()->getUsername()][]=['id-quiz'=>$result->getQuiz()->getId(),'titre-quiz'=>$result->getQuiz()->getTitle(),'student'=>$result->getStudent()->getUsername(),'score'=>$result->getScore(),'nbr_passation'=>count($results)];
+
+                }
+            //dump($tabResults);
+
+
+                return $this->render('quiz/showResultsStudent.html.twig',[
+                    'results' => $tabResults,
+                    'form' => $form->createView(),
+
+                ]);
+
+
+            }
+            else
+            {
+
+                return $this->render('quiz/showResultsStudent.html.twig',[
+                    'results' => null,
+                    'form' => $form->createView(),
+
+                ]);
+
+            }
+
+
+
+
+
+
+        } else
+
+        {
+
+            if ($results->findAll())
+             $results=$results->findBy(array('quiz' => current($choix_quiz)),array('score' => 'desc'));
+         else $results=[];
+
+         if (count($results)>0){
+
+            foreach ($results as $result )
+            {
+
+
+
+                $tabResults[$result->getStudent()->getUsername()][]=['id-quiz'=>$result->getQuiz()->getId(),'titre-quiz'=>$result->getQuiz()->getTitle(),'student'=>$result->getStudent()->getUsername(),'score'=>$result->getScore(),'nbr_passation'=>count($results)];
+
+            }
+            dump($tabResults);
+
+            return $this->render('quiz/showResultsStudent.html.twig',[
+                'results' => $tabResults,
+                'form' => $form->createView(),
+
+            ]);
+
+
+        }
+        else
+        {
+
+            return $this->render('quiz/showResultsStudent.html.twig',[
+                'results' => null,
+                'form' => $form->createView(),
+
+            ]);
+
+        }
+
+
+
+
+    }
+
+
+
+    return $this->render('quiz/showResultsStudent.html.twig',[
+        'results' => null,
+        'form' => $form->createView(),
+
+    ]);
+
+
+}
+
+
+
 // AJOUT FONCTION SEABIRD POUR AFFICHAGE STATISTIQUES
 /**
 * @Route("/results", name="quiz_result" )

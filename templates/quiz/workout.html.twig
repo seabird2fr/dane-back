@@ -18,7 +18,18 @@
     </h1>
 
     {{ form_start(form) }}
-        {{ form_widget(form) }}
+
+    <div class="jumbotron workoutquestion">
+        <p>
+     {{question.text | striptags('<b><strong><br><p>') | raw | nl2br}}
+         </p>
+        </div>
+    
+       
+   <div style="display:none"> {{ form_row(form.text) }}</div>
+
+    {{ form_row(form.answers) }}
+
 
         <div class="progress" style="height: 10px;">
             <div class="progress-bar" role="progressbar" style="width: {{progress}}%;" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100"></div>
