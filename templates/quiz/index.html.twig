@@ -43,6 +43,7 @@
                         <div class="form-check-inline">
                             <a class="btn btn-primary btn-sm mr-2" href="{{ path('quiz_show', {'id': quiz.id}) }}" title="{{'Montrer'}}"><i class="fas fa-eye"></i></a>
                             <a class="btn btn-primary btn-sm mr-2" href="{{ path('quiz_edit', {'id': quiz.id}) }}" title="{{'Editer'}}"><i class="fas fa-pencil-alt"></i></a>
+                            <a class="btn btn-primary btn-sm mr-2" href="{{ path('quiz_workout_delete', {'id': quiz.id}) }}" title="{{'Reset'}}"  onclick="return confirm('Etes-vous sur de vouloir réinitialiser le quiz ?')"><i class="fas fa-sync-alt"></i></a>
                             {{ include('quiz/_delete_form.html.twig') }}
                             <a class="btn btn-primary btn-sm mr-2" href="{{ path('quiz_start', {'id': quiz.id}) }}">{{'Commencer'}} <i class="fas fa-arrow-circle-right"></i></a>
                         </div>

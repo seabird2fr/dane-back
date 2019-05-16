@@ -831,6 +831,30 @@ if ($questionNumber < $quiz->getNumberOfQuestions()) {
         ]);
     }
 
+
+/**
+     * @Route("/workout/{id}", name="quiz_workout_delete")
+     */
+    public function deleteWorkout(Request $request,$id,WorkoutRepository $results, Quiz $quiz, EntityManagerInterface $em): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_TEACHER', null, 'Access not allowed');
+
+         $results=$results->findBy(array('quiz' => $id));
+        //dump($results);
+            foreach ($results as  $workout) {
+                 $em->remove($workout);
+                $em->flush();
+            }
+           
+
+            $this->addFlash('success', sprintf('Quiz "%s" is réinitialisé.', $quiz->getTitle()));
+        
+
+        return $this->redirectToRoute('quiz_index');
+    }
+
+
+
     /**
      * @Route("/{id}", name="quiz_delete", methods="DELETE")
      */
