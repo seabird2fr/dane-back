@@ -40,7 +40,7 @@
                             <a class="nav-link {% if '/quiz/' in app.request.server.get('REQUEST_URI') %} active {% endif %}" href="{{ path('quiz_result') }}">Résultats</a>
                         </li>
                          <li>
-                            <a class="nav-link {% if '/quiz/' in app.request.server.get('REQUEST_URI') %} active {% endif %}" href="{{ path('quiz_result_eleve') }}">Résultats individuel</a>
+                            <a class="nav-link {% if '/quiz/' in app.request.server.get('REQUEST_URI') %} active {% endif %}" href="{{ path('quiz_result_eleve') }}">Résultats triés</a>
                         </li>
                     {% endif %}
                     {% if is_granted('ROLE_ADMIN') %}
