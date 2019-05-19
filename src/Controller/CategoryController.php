@@ -77,9 +77,10 @@ class CategoryController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            $this->addFlash('success', sprintf('Category "%s" is updated.', $category->getShortname()));
+            $this->addFlash('success', sprintf('Category "%s" mise à jour.', $category->getShortname()));
 
-            return $this->redirectToRoute('category_edit', ['id' => $category->getId()]);
+            return $this->redirectToRoute('category_index');
+            //return $this->redirectToRoute('category_edit', ['id' => $category->getId()]);
         }
 
         return $this->render('category/edit.html.twig', [

@@ -169,9 +169,10 @@ if (empty($results)) $results=[];
 
             $em->flush();
 
-            $this->addFlash('success', sprintf('Question #%s is updated.', $question->getId()));
+            $this->addFlash('success', sprintf('Question #%s mise à jour.', $question->getId()));
 
-            return $this->redirectToRoute('question_edit', ['id' => $question->getId()]);
+            return $this->redirectToRoute('question_index');
+            //return $this->redirectToRoute('question_edit', ['id' => $question->getId()]);
         }
 
         return $this->render('question/edit.html.twig', [

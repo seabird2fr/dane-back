@@ -34,14 +34,18 @@ class QuizController extends Controller
 
 
     /**
-     * @Route("/results-eleve", name="quiz_result_eleve" )
+     * @Route("/results-eleve/{page}", name="quiz_result_eleve", requirements={"page":"[0-9]{1,}"} )
      *@IsGranted("ROLE_TEACHER") 
      */
-    public function viewResultEleve(WorkoutRepository $results,QuizRepository $quiz,Request $request)
+    public function viewResultEleve(WorkoutRepository $results,QuizRepository $quiz,Request $request,$page=1)
     {
+
+$limit=10; // PAGINATION =>  enregistrements par page
+
 
 // on récupère toutes les quizzes disponibles
         $quizzes= $quiz->findAll();
+
 
         if (count($quizzes)>0){    
 // on met dans un tableau les quiz pour créer le formulaire de choix des résultats dans twig
@@ -112,59 +116,70 @@ class QuizController extends Controller
 //dump($result->getStudent()->getUsername());
 //dump($result->getScore());
 
-                    $tabResults[$result->getStudent()->getUsername()][]=['id-quiz'=>$result->getQuiz()->getId(),'titre-quiz'=>$result->getQuiz()->getTitle(),'student'=>$result->getStudent()->getUsername(),'score'=>$result->getScore(),'nbr_passation'=>count($results)];
+                //dump($result);
+                $date1=$result->getStartedAt()->format('U'); // heure depart en secondes
+                $date2=$result->getEndedAt()->format('U'); // heure fin en secondes
+                //dump($date2-$date1);
 
-                }
+                $tabResults[$result->getScore()][]=['id-quiz'=>$result->getQuiz()->getId(),'titre-quiz'=>$result->getQuiz()->getTitle(),'student'=>$result->getStudent()->getUsername(),'score'=>$result->getScore(),'nbr_passation'=>count($results),'duree'=>date_diff($result->getStartedAt(),$result->getEndedAt())->format('%i min %s s'),'duree-secondes'=>$date2-$date1];
+
+            }
             //dump($tabResults);
 
-
-                return $this->render('quiz/showResultsStudent.html.twig',[
-                    'results' => $tabResults,
-                    'form' => $form->createView(),
-
-                ]);
-
-
-            }
-            else
+//********************************************************* trie meilleur score avec temps le plus court *************************
+            //on boucle sur les scores
+            foreach ($tabResults as $score )
             {
+        //dump($score);
+                // on trie chaque score par par temps croissant
+                usort($score, function ($a, $b)
+                {
 
-                return $this->render('quiz/showResultsStudent.html.twig',[
-                    'results' => null,
-                    'form' => $form->createView(),
+                    if ($a['duree-secondes'] == $b['duree-secondes']) {
+                        return 0;
+                    }
+                    return ($a['duree-secondes'] < $b['duree-secondes'] ) ? -1 : 1;
+                });
 
-                ]);
+        //dump($score);
+
+                //on boucle sur chaque score
+                foreach ($score as $values )
+                {
+
+                    $tabResults2[$values['student']][]=$values;
+
+
+                }
+
 
             }
 
+  // ********************* debut pagination ***********************************
+                $start = $page * $limit - $limit; 
+                 // 1 * 10 -10 = 0 
+                 // 2 * 10 -10 = 10 
+                $total=count($tabResults2); // nbrs d'enregistrement au total
+                $pages= ceil($total/$limit); // nbrs de page total arrondi à l'entier supérieur
 
 
+                $tabResults = array_slice( $tabResults2, $start, $limit );
+                /*dump($tabResults2);
+                dump($tabResults);
+                dump($start);
+                dump($limit);*/
+ // ********************* fin pagination ***********************************
+
+        //dump($tabResults);
+//********************************************************* fin trie meilleur score avec temps le plus court *************************
 
 
-
-        } else
-
-        {
-
-            if ($results->findAll())
-             $results=$results->findBy(array('quiz' => current($choix_quiz)),array('score' => 'desc'));
-         else $results=[];
-
-         if (count($results)>0){
-
-            foreach ($results as $result )
-            {
-
-
-
-                $tabResults[$result->getStudent()->getUsername()][]=['id-quiz'=>$result->getQuiz()->getId(),'titre-quiz'=>$result->getQuiz()->getTitle(),'student'=>$result->getStudent()->getUsername(),'score'=>$result->getScore(),'nbr_passation'=>count($results)];
-
-            }
-            dump($tabResults);
 
             return $this->render('quiz/showResultsStudent.html.twig',[
                 'results' => $tabResults,
                 'form' => $form->createView(),
+                'pages'=>$pages,
+                'page'=>$page
 
             ]);
 
@@ -184,18 +199,121 @@ class QuizController extends Controller
 
 
 
+
+
+    } else
+
+    {
+
+        if ($results->findAll())
+        {
+
+
+            $results=$results->findBy(array('quiz' => current($choix_quiz)),array('score' => 'desc'));
+
+        }
+        else $results=[];
+
+        if (count($results)>0){
+
+            foreach ($results as $result )
+            {
+
+                //dump($result);
+                $date1=$result->getStartedAt()->format('U'); // heure depart en secondes
+                $date2=$result->getEndedAt()->format('U'); // heure fin en secondes
+                //dump($date2-$date1);
+
+                $tabResults[$result->getScore()][]=['id-quiz'=>$result->getQuiz()->getId(),'titre-quiz'=>$result->getQuiz()->getTitle(),'student'=>$result->getStudent()->getUsername(),'score'=>$result->getScore(),'nbr_passation'=>count($results),'duree'=>date_diff($result->getStartedAt(),$result->getEndedAt())->format('%i min %s s'),'duree-secondes'=>$date2-$date1];
+
+            }
+            //dump($tabResults);
+
+
+//********************************************************* trie meilleur score avec temps le plus court *************************
+            //on boucle sur les scores
+            foreach ($tabResults as $score )
+            {
+        //dump($score);
+                // on trie chaque score par par temps croissant
+                usort($score, function ($a, $b)
+                {
+
+                    if ($a['duree-secondes'] == $b['duree-secondes']) {
+                        return 0;
+                    }
+                    return ($a['duree-secondes'] < $b['duree-secondes'] ) ? -1 : 1;
+                });
+
+        //dump($score);
+
+                //on boucle sur chaque score
+                foreach ($score as $values )
+                {
+
+                    $tabResults2[$values['student']][]=$values;
+
+
+                }
+
+
+            }
+
+
+  // ********************* debut pagination ***********************************
+                $start = $page * $limit - $limit; 
+                 // 1 * 10 -10 = 0 
+                 // 2 * 10 -10 = 10 
+                $total=count($tabResults2); // nbrs d'enregistrement au total
+                $pages= ceil($total/$limit); // nbrs de page total arrondi à l'entier supérieur
+
+
+                $tabResults = array_slice( $tabResults2, $start, $limit );
+                /*dump($tabResults2);
+                dump($tabResults);
+                dump($start);
+                dump($limit);*/
+ // ********************* fin pagination ***********************************
+        //dump($tabResults);
+//********************************************************* fin trie meilleur score avec temps le plus court *************************
+
+
+                return $this->render('quiz/showResultsStudent.html.twig',[
+                    'results' => $tabResults,
+                    'form' => $form->createView(),
+                    'pages'=>$pages,
+                    'page'=>$page
+
+                ]);
+
+
+            }
+            else
+            {
+
+                return $this->render('quiz/showResultsStudent.html.twig',[
+                    'results' => null,
+                    'form' => $form->createView(),
+
+                ]);
+
+            }
+
+
+
+
+        }
+
+
+
+        return $this->render('quiz/showResultsStudent.html.twig',[
+            'results' => null,
+            'form' => $form->createView(),
+
+        ]);
+
+
     }
-
-
-
-    return $this->render('quiz/showResultsStudent.html.twig',[
-        'results' => null,
-        'form' => $form->createView(),
-
-    ]);
-
-
-}
 
 
 
@@ -820,9 +938,10 @@ if ($questionNumber < $quiz->getNumberOfQuestions()) {
 
             $this->getDoctrine()->getManager()->flush();
 
-            $this->addFlash('success', sprintf('Quiz "%s" is updated.', $quiz->getTitle()));
+            $this->addFlash('success', sprintf('Quiz "%s" mis à jour.', $quiz->getTitle()));
 
-            return $this->redirectToRoute('quiz_edit', ['id' => $quiz->getId()]);
+            return $this->redirectToRoute('quiz_index');
+            //return $this->redirectToRoute('quiz_edit', ['id' => $quiz->getId()]);
         }
 
         return $this->render('quiz/edit.html.twig', [
@@ -835,23 +954,23 @@ if ($questionNumber < $quiz->getNumberOfQuestions()) {
 /**
      * @Route("/workout/{id}", name="quiz_workout_delete")
      */
-    public function deleteWorkout(Request $request,$id,WorkoutRepository $results, Quiz $quiz, EntityManagerInterface $em): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_TEACHER', null, 'Access not allowed');
+public function deleteWorkout(Request $request,$id,WorkoutRepository $results, Quiz $quiz, EntityManagerInterface $em): Response
+{
+    $this->denyAccessUnlessGranted('ROLE_TEACHER', null, 'Access not allowed');
 
-         $results=$results->findBy(array('quiz' => $id));
+    $results=$results->findBy(array('quiz' => $id));
         //dump($results);
-            foreach ($results as  $workout) {
-                 $em->remove($workout);
-                $em->flush();
-            }
-           
+    foreach ($results as  $workout) {
+     $em->remove($workout);
+     $em->flush();
+ }
 
-            $this->addFlash('success', sprintf('Quiz "%s" is réinitialisé.', $quiz->getTitle()));
-        
 
-        return $this->redirectToRoute('quiz_index');
-    }
+ $this->addFlash('success', sprintf('Quiz "%s" is réinitialisé.', $quiz->getTitle()));
+
+
+ return $this->redirectToRoute('quiz_index');
+}
 
 
 
