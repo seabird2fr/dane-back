@@ -118,10 +118,21 @@ $limit=10; // PAGINATION =>  enregistrements par page
 
                 //dump($result);
                 $date1=$result->getStartedAt()->format('U'); // heure depart en secondes
+     
+         if (!empty($result->getEndedAt())) 
+                {
                 $date2=$result->getEndedAt()->format('U'); // heure fin en secondes
-                //dump($date2-$date1);
+                $duree= date_diff($result->getStartedAt(),$result->getEndedAt())->format('%i min %s s');
+                }
+            else {
 
-                $tabResults[$result->getScore()][]=['id-quiz'=>$result->getQuiz()->getId(),'titre-quiz'=>$result->getQuiz()->getTitle(),'student'=>$result->getStudent()->getUsername(),'score'=>$result->getScore(),'nbr_passation'=>count($results),'duree'=>date_diff($result->getStartedAt(),$result->getEndedAt())->format('%i min %s s'),'duree-secondes'=>$date2-$date1];
+            $date2=$result->getStartedAt()->add(new \DateInterval('PT2H'))->format('U'); // si pas de date de fin on rajoute 2h
+            //$duree=date('h', $date2-$date1). ' h ' .date('i', $date2-$date1).' min '.date('s', $date2-$date1).' s quiz non fini';
+                $duree="Aucune réponse !!!"; 
+        }
+
+
+                $tabResults[$result->getScore()][]=['id-quiz'=>$result->getQuiz()->getId(),'titre-quiz'=>$result->getQuiz()->getTitle(),'student'=>$result->getStudent()->getUsername(),'score'=>$result->getScore(),'nbr_passation'=>count($results),'duree'=>$duree,'duree-secondes'=>$date2-$date1];
 
             }
             //dump($tabResults);
@@ -221,10 +232,22 @@ $limit=10; // PAGINATION =>  enregistrements par page
 
                 //dump($result);
                 $date1=$result->getStartedAt()->format('U'); // heure depart en secondes
-                $date2=$result->getEndedAt()->format('U'); // heure fin en secondes
-                //dump($date2-$date1);
 
-                $tabResults[$result->getScore()][]=['id-quiz'=>$result->getQuiz()->getId(),'titre-quiz'=>$result->getQuiz()->getTitle(),'student'=>$result->getStudent()->getUsername(),'score'=>$result->getScore(),'nbr_passation'=>count($results),'duree'=>date_diff($result->getStartedAt(),$result->getEndedAt())->format('%i min %s s'),'duree-secondes'=>$date2-$date1];
+    if (!empty($result->getEndedAt())) 
+                {
+                $date2=$result->getEndedAt()->format('U'); // heure fin en secondes
+                $duree= date_diff($result->getStartedAt(),$result->getEndedAt())->format('%i min %s s');
+                }
+            else {
+
+            $date2=$result->getStartedAt()->add(new \DateInterval('PT2H'))->format('U'); // si pas de date de fin on rajoute 2h
+            //$duree=date('h', $date2-$date1). ' h ' .date('i', $date2-$date1).' min '.date('s', $date2-$date1).' s quiz non fini';
+                $duree="Aucune réponse !!!"; 
+        }
+
+          
+
+                $tabResults[$result->getScore()][]=['id-quiz'=>$result->getQuiz()->getId(),'titre-quiz'=>$result->getQuiz()->getTitle(),'student'=>$result->getStudent()->getUsername(),'score'=>$result->getScore(),'nbr_passation'=>count($results),'duree'=>$duree,'duree-secondes'=>$date2-$date1];
 
             }
             //dump($tabResults);
