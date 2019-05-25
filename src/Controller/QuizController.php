@@ -40,7 +40,7 @@ class QuizController extends Controller
     public function viewResultEleve(WorkoutRepository $results,QuizRepository $quiz,Request $request,$page=1)
     {
 
-$limit=10; // PAGINATION =>  enregistrements par page
+$limit=1000; // PAGINATION =>  enregistrements par page
 
 
 // on récupère toutes les quizzes disponibles
